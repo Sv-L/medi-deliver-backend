@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import ctrlWrapper from '../helpers/ctrlWrapper.js';
 import HttpError from '../helpers/HttpError.js';
+import { nanoid } from 'nanoid';
 
 const {SECRET_KEY} = process.env;
 
