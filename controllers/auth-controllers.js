@@ -4,8 +4,24 @@ import jwt from 'jsonwebtoken';
 import ctrlWrapper from '../helpers/ctrlWrapper.js';
 import HttpError from '../helpers/HttpError.js';
 
-// const {SECRET_KEY} = process.env;
-const  SECRET_KEY = 'fghjklfghjkofghuighujio'
+const {SECRET_KEY} = process.env;
+
+const register = async (req, res, next) => {
+   const { password, email } = req.body;
+ 
+   const hashPassword = await bcrypt.hash(password, 6);
+   const verificationToken = nanoid();
+ 
+   const newUser = await User.create({
+     ...req.body,
+     password: hashPassword,
+     token: verificationToken,
+   });
+ 
+   res.status(201).json({
+     newUser,
+   });
+ };
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -32,6 +48,7 @@ const logout = async (req, res) => {
 };
 
 const authControllers = {
+  register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
 };
