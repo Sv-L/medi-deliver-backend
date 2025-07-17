@@ -4,6 +4,8 @@ import cors from "cors";
 import dotenv from 'dotenv';
 import usersRouter from './routes/api/auth.js'
 import customersRouter from "./routes/api/customers.js";
+import transactionsRouter from "./routes/api/transaktion.js";
+import orderRouter from "./routes/api/orders.js";
 
 dotenv.config();
 
@@ -15,6 +17,8 @@ app.use(express.json());
 
 app.use("/api/users", usersRouter);
 app.use("/api/customers", customersRouter);
+app.use("/api/transactions", transactionsRouter);
+app.use("/api/orders", orderRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });

@@ -1,13 +1,18 @@
 import Customer from '../service/schemas/customerSchemas.js';
 import ctrlWrapper from '../helpers/ctrlWrapper.js';
 
-const registerCustomer = async (req, res) => {
-    const newCustomer = await Customer.create({
+const addCustomer = async (req, res) => {
+    try {
+        const newCustomer = await Customer.create({
         ...req.body,
     });
     res.status(201).json({
         newCustomer,
     });
+    }
+    catch(error) {
+        res.status(500).json({ message: error.message });
+    }
 }
 
 const allcustomers = async (req, res) => {
@@ -17,16 +22,18 @@ const allcustomers = async (req, res) => {
     sortOptions[sortBy] = order === 'asc' ? 1 : -1;
 
     try {
-        let data = await Customer.find({}, "-createdAt -updatedAt", { skip, limit }).sort(sortOptions).exec();
-
+        const query = {};
         if (name) {
-            const query = {};
             query.name = new RegExp(name, 'i');
-            data = await Customer.find(query, "-createdAt -updatedAt", { skip, limit }).sort(sortOptions).exec();
         }
 
+        const [data, count] = await Promise.all([
+            Customer.find(query, "-createdAt -updatedAt", { skip, limit }).sort(sortOptions).exec(),
+            Customer.countDocuments(query).exec()
+        ]);
+
         if (data.length > 0) {
-            return res.json(data);
+            return res.json({ data, count });
         } else {
             return res.status(404).json("The list is empty");
         }
@@ -46,7 +53,7 @@ const customerInfo = async (req, res) => {
 }
 
 const customerControllers = {
-    registerCustomer: ctrlWrapper(registerCustomer),
+    addCustomer: ctrlWrapper(addCustomer),
     allcustomers: ctrlWrapper(allcustomers),
     customerInfo: ctrlWrapper(customerInfo),
 };

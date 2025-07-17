@@ -3,7 +3,7 @@ import customerControllers from '../../controllers/customers-controllers.js'
 
 const customersRouter = express.Router();
 
-customersRouter.post('/register', customerControllers.registerCustomer);
+customersRouter.post('/register', customerControllers.addCustomer);
 customersRouter.get('/', customerControllers.allcustomers);
 customersRouter.get('/:customerId', customerControllers.customerInfo);
 
